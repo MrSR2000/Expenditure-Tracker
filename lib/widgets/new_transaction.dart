@@ -1,11 +1,36 @@
 import 'package:flutter/material.dart';
 
-class NewTransaction extends StatelessWidget {
-  final titleController = TextEditingController();
-  final amountController = TextEditingController();
+class NewTransaction extends StatefulWidget {
   final Function addTransaction;
 
   NewTransaction(this.addTransaction);
+
+  @override
+  State<NewTransaction> createState() => _NewTransactionState();
+}
+
+class _NewTransactionState extends State<NewTransaction> {
+  final titleController = TextEditingController();
+
+  final amountController = TextEditingController();
+
+  void submitData() {
+    final enteredTitle = titleController.text;
+    final enteredAmount = double.parse(amountController.text);
+
+    if (enteredTitle.isEmpty || enteredAmount <= 0) {
+      return;
+    }
+
+    //print(enteredTitle);
+
+    widget.addTransaction(
+      enteredTitle,
+      enteredAmount,
+    );
+
+    Navigator.of(context).pop(); //closes top most screen opened
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -22,31 +47,28 @@ class NewTransaction extends StatelessWidget {
             decoration: const InputDecoration(
               labelText: 'Expenditure name',
             ),
+            onSubmitted: (_) => submitData(),
           ),
           TextField(
             // onChanged: (value) {
             //   amountInput = value;
             // },
             controller: amountController,
+            keyboardType: TextInputType.number,
             decoration: const InputDecoration(
               labelText: 'Amount',
             ),
+            onSubmitted: (_) => submitData(),
           ),
           TextButton(
-            onPressed: () {
-              print(titleController.text);
-              print(amountController.text);
-              addTransaction(
-                  titleController.text, double.parse(amountController.text));
-            },
+            onPressed: submitData,
             style: ElevatedButton.styleFrom(
               foregroundColor: Colors.red,
             ),
-            child: Text('Add Transaction'),
+            child: const Text('Add Transaction'),
           )
         ]),
       ),
     );
-    ;
   }
 }

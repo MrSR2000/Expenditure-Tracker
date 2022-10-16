@@ -1,5 +1,6 @@
 import 'package:expenditure_tracker/models/transaction.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class TransactionList extends StatelessWidget {
   final List<Transaction> transactions;
@@ -9,7 +10,7 @@ class TransactionList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 300,
+      height: 500,
       child: ListView.builder(
         //needs parent to tell the hize i.e. height of container
         itemBuilder: (ctx, index) {
@@ -25,15 +26,17 @@ class TransactionList extends StatelessWidget {
                   decoration: BoxDecoration(
                     border: Border.all(
                       color: Colors.black,
+                      //color: Theme.of(context).colorScheme.primary,
                       width: 2,
                     ),
                   ),
                   child: Text(
-                    'RS. ${transactions[index].amount.toString()}',
-                    style: const TextStyle(
+                    'RS. ${transactions[index].amount.toStringAsFixed(2)}',
+                    style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 15,
-                      color: Color.fromARGB(255, 148, 19, 10),
+                      //color: Color.fromARGB(255, 148, 19, 10),
+                      color: Theme.of(context).colorScheme.primary,
                     ),
                   ),
                 ),
@@ -42,14 +45,15 @@ class TransactionList extends StatelessWidget {
                   children: [
                     Text(
                       transactions[index].title,
-                      style: const TextStyle(
-                        color: Colors.black,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 30,
-                      ),
+                      // style: const TextStyle(
+                      //   color: Colors.black,
+                      //   fontWeight: FontWeight.bold,
+                      //   fontSize: 30,
+                      // ),
+                      style: Theme.of(context).textTheme.headline6,
                     ),
                     Text(
-                      transactions[index].date.toString(),
+                      DateFormat.yMMMEd().format(transactions[index].date),
                       style: const TextStyle(
                         color: Colors.grey,
                         fontWeight: FontWeight.w400,
