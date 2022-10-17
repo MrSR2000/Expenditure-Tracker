@@ -10,49 +10,58 @@ class TransactionList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 500,
-      child: ListView.builder(
-        //needs parent to tell the hize i.e. height of container
-        itemBuilder: (ctx, index) {
-          return Card(
-            child: Row(
+      height: 450,
+      child: transactions.isEmpty
+          ? Column(
               children: [
+                Text(
+                  'No expenditure added yet!',
+                  style: Theme.of(context).textTheme.headline6,
+                ),
+                const SizedBox(
+                  height: 50,
+                ),
                 Container(
-                  padding: const EdgeInsets.all(5),
-                  margin: const EdgeInsets.symmetric(
-                    vertical: 30,
-                    horizontal: 50,
-                  ),
-                  decoration: BoxDecoration(
-                    border: Border.all(
-                      color: Colors.black,
-                      //color: Theme.of(context).colorScheme.primary,
-                      width: 2,
-                    ),
-                  ),
-                  child: Text(
-                    'RS. ${transactions[index].amount.toStringAsFixed(2)}',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 15,
-                      //color: Color.fromARGB(255, 148, 19, 10),
-                      color: Theme.of(context).colorScheme.primary,
-                    ),
+                  height: 200,
+                  child: Image.asset(
+                    'assets/images/blank.gif',
+                    fit: BoxFit.cover,
                   ),
                 ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
+              ],
+            )
+          : ListView.builder(
+              //needs parent to tell the hize i.e. height of container
+              itemBuilder: (ctx, index) {
+                return Card(
+                  elevation: 6,
+                  margin:
+                      const EdgeInsets.symmetric(vertical: 8, horizontal: 6),
+                  child: ListTile(
+                    leading: CircleAvatar(
+                      // backgroundImage: NetworkImage(
+                      //     'https://c8.alamy.com/comp/2DXN8GB/us-dollar-border-with-empty-middle-area-2DXN8GB.jpg'),
+                      radius: 30,
+                      backgroundColor: const Color.fromARGB(255, 214, 210, 210),
+                      child: Padding(
+                        padding: const EdgeInsets.all(8),
+                        child: FittedBox(
+                          child: Text(
+                            'RS. ${transactions[index].amount.toStringAsFixed(2)}',
+                            style: const TextStyle(
+                              color: Colors.black,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 15,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    title: Text(
                       transactions[index].title,
-                      // style: const TextStyle(
-                      //   color: Colors.black,
-                      //   fontWeight: FontWeight.bold,
-                      //   fontSize: 30,
-                      // ),
                       style: Theme.of(context).textTheme.headline6,
                     ),
-                    Text(
+                    subtitle: Text(
                       DateFormat.yMMMEd().format(transactions[index].date),
                       style: const TextStyle(
                         color: Colors.grey,
@@ -60,14 +69,11 @@ class TransactionList extends StatelessWidget {
                         fontSize: 11,
                       ),
                     ),
-                  ],
-                ),
-              ],
+                  ),
+                );
+              },
+              itemCount: transactions.length,
             ),
-          );
-        },
-        itemCount: transactions.length,
-      ),
     );
   }
 }
