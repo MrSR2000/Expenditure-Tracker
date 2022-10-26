@@ -3,8 +3,13 @@ import './widgets/new_transaction.dart';
 import './models/transaction.dart';
 import './widgets/transaction_list.dart';
 import './widgets/chart.dart';
+import 'package:uuid/uuid.dart';
+import 'package:flutter/services.dart';
 
 void main() {
+  // WidgetsFlutterBinding.ensureInitialized();
+  // SystemChrome.setPreferredOrientations(
+  //     [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);     //force app to only work in potrait mode
   runApp(const MyApp());
 }
 
@@ -27,6 +32,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.green,
         accentColor: Color.fromARGB(255, 13, 67, 15),
+        errorColor: Color.fromARGB(255, 81, 66, 65),
         // colorScheme: ColorScheme.dark(
         //   secondary: Colors.red,
         //   primary: Colors.white,
@@ -84,19 +90,24 @@ class _MyHomePageState extends State<MyHomePage> {
   ];
 
   List<Transaction> get _recentTransaction {
-    return _userTransactions.where((element) {
-      return element.date.isAfter(
-        DateTime.now().subtract(
-          const Duration(days: 7),
-        ),
-      );
-    }).toList();
+    return _userTransactions.where(
+      (element) {
+        return element.date.isAfter(
+          DateTime.now().subtract(
+            const Duration(days: 7),
+          ),
+        );
+      },
+    ).toList();
   }
 
   void _addNewTransaction(
       String txTitle, double txAmount, DateTime chosenDate) {
+    const uuid = Uuid();
+
     final newTx = Transaction(
-      id: DateTime.now().toString(),
+      //id: DateTime.now().toString(),
+      id: uuid.v1(),
       title: txTitle,
       amount: txAmount,
       date: chosenDate,
@@ -105,6 +116,15 @@ class _MyHomePageState extends State<MyHomePage> {
     setState(() {
       _userTransactions.add(newTx);
     });
+  }
+
+  void _deleteTransaction(String id) {
+    setState(() {
+      _userTransactions.removeWhere((tx) {
+        return tx.id == id;
+      });
+    });
+    //print('delete');
   }
 
   void _startAddNewTransaction(BuildContext ctx) {
@@ -120,35 +140,63 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
+  bool _showChart = false;
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          'Expenditure Tracker',
-          style: TextStyle(
-            fontFamily: 'Black',
-            fontWeight: FontWeight.bold,
-            color: Colors.white,
-            fontSize: 30,
-          ),
+    final appBarr = AppBar(
+      title: const Text(
+        'Expenditure Tracker',
+        style: TextStyle(
+          fontFamily: 'Black',
+          fontWeight: FontWeight.bold,
+          color: Colors.white,
+          fontSize: 30,
         ),
-        actions: [
-          IconButton(
-            onPressed: () => _startAddNewTransaction(context),
-            icon: const Icon(
-              Icons.add,
-            ),
-          )
-        ],
       ),
+      actions: [
+        IconButton(
+          onPressed: () => _startAddNewTransaction(context),
+          icon: const Icon(
+            Icons.add,
+          ),
+        )
+      ],
+    );
+    return Scaffold(
+      appBar: appBarr,
       body: SingleChildScrollView(
         child: Column(
           //mainAxisAlignment: MainAxisAlignment.start,
           //crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Chart(_recentTransaction),
-            TransactionList(_userTransactions),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text('Show Chart'),
+                Switch(
+                    value: _showChart,
+                    onChanged: (val) {
+                      setState(() {
+                        _showChart = val;
+                      });
+                    })
+              ],
+            ),
+            _showChart
+                ? Container(
+                    height: (MediaQuery.of(context).size.height -
+                            appBarr.preferredSize.height -
+                            MediaQuery.of(context).padding.top) *
+                        0.7,
+                    child: Chart(_recentTransaction))
+                : Container(
+                    height: (MediaQuery.of(context).size.height -
+                            appBarr.preferredSize.height -
+                            MediaQuery.of(context).padding.top) *
+                        .7,
+                    child:
+                        TransactionList(_userTransactions, _deleteTransaction)),
           ],
         ),
       ),

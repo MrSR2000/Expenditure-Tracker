@@ -13,14 +13,14 @@ class Chart extends StatelessWidget {
       7,
       (index) {
         final weekDay = DateTime.now().subtract(Duration(days: index));
-        double totalSum = 0;
+        double totalSumOfDay = 0;
         int i;
 
         for (i = 0; i < recentTransactions.length; i++) {
           if (recentTransactions[i].date.day == weekDay.day &&
               recentTransactions[i].date.month == weekDay.month &&
               recentTransactions[i].date.year == weekDay.year) {
-            totalSum += recentTransactions[i].amount;
+            totalSumOfDay += recentTransactions[i].amount;
           }
         }
 
@@ -29,7 +29,7 @@ class Chart extends StatelessWidget {
 
         return {
           'day': DateFormat.E().format(weekDay),
-          'amount': totalSum,
+          'amount': totalSumOfDay,
         };
       },
     );

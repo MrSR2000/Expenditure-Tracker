@@ -19,7 +19,9 @@ class _NewTransactionState extends State<NewTransaction> {
     final enteredTitle = _titleController.text;
     final enteredAmount = double.parse(_amountController.text);
 
-    if (enteredTitle.isEmpty || enteredAmount <= 0) {
+    if (enteredTitle.isEmpty ||
+        enteredAmount <= 0 ||
+        _selectedDate == DateTime.parse('0000-00-00')) {
       return;
     }
 
@@ -67,7 +69,7 @@ class _NewTransactionState extends State<NewTransaction> {
             decoration: const InputDecoration(
               labelText: 'Expenditure name',
             ),
-            onSubmitted: (_) => _submitData(),
+            textInputAction: TextInputAction.next,
           ),
           TextField(
             // onChanged: (value) {
@@ -85,8 +87,11 @@ class _NewTransactionState extends State<NewTransaction> {
             child: Row(
               children: [
                 Expanded(
+                  //used expanded to push choose date to left side
                   child: Text(
-                    'Picked date: ${DateFormat.yMMMMd().format(_selectedDate)}',
+                    _selectedDate == DateTime.parse('0000-00-00')
+                        ? 'Date not selected'
+                        : 'Picked date: ${DateFormat.yMMMMd().format(_selectedDate)}',
                   ),
                 ),
                 TextButton(
